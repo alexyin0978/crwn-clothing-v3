@@ -2,7 +2,10 @@
 import React from 'react';
 
 //firebase
-import { signInWithGooglePopup } from '../../utils/firebase/firebase';
+import { 
+  signInWithGooglePopup,
+  createUserDocRef,
+} from '../../utils/firebase/firebase';
 
 
 
@@ -10,7 +13,11 @@ const Signin = () => {
 
   //與api, db互動的function都是async
   const handleGoogleSignin = async () => {
+
     const { user } = await signInWithGooglePopup();
+
+    createUserDocRef(user);
+
   };
 
   return (

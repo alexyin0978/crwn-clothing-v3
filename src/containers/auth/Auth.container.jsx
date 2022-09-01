@@ -2,7 +2,7 @@
 import React from 'react'
 
 //components
-import Signin from '../../components/signin/Signin';
+import Signin from '../../components/signin/Signin.component';
 
 const Auth = () => {
   return (
