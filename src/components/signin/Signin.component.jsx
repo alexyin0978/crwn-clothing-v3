@@ -18,6 +18,8 @@ const Signin = () => {
 
     createUserDocRef(user);
 
+    console.log('test')
+
   };
 
   return (

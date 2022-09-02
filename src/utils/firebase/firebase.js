@@ -8,7 +8,8 @@ import {
 import { 
   getFirestore, 
   doc, 
-  getDoc 
+  getDoc, 
+  setDoc
 } from "firebase/firestore";
 
 
@@ -51,5 +52,24 @@ export const createUserDocRef = async (user) => {
   //透過getdoc.exist()來檢查user是否存在於db
   const userSnapShot = await getDoc(userDocRef);
 
-  //若不存在, 則透過setdoc來將user資料寫入db
+  //若不存在, 則為新帳戶, 需透過setdoc來將user資料寫入db
+  if (!userSnapShot.exists()){
+
+    const { displayName, email } = user;
+    const createdAt = new Date();
+
+    try {
+      await setDoc(userDocRef, { 
+        displayName, 
+        email, 
+        createdAt 
+      });
+
+    } catch(err) {
+      console.log('error creating user with google signin', err.message);
+    }
+  }
+
+  //若user已經存在, 則單純return user doc
+  return userDocRef;
 };
