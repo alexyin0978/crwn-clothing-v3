@@ -1,5 +1,8 @@
 //hooks
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
+
+//context
+import { UserContext } from '../../contexts/User.context';
 
 //firebase
 import {
@@ -24,6 +27,8 @@ const initFormVal = {
 
 const Signin = () => {
 
+  const { setCurrentUser } = useContext(UserContext);
+
   const [formVal, setFormVal] = useState(initFormVal);
 
   const {
@@ -43,6 +48,8 @@ const Signin = () => {
     try {
 
       const { user } = await signInAuthWithEmailAndPassword(email, password);
+
+      setCurrentUser(user); //將user資料儲存在context內
 
       //將input清空
       resetFormInput();
@@ -65,6 +72,8 @@ const Signin = () => {
   const handleGoogleSignin = async () => {
 
     const { user } = await signInWithGooglePopup();
+
+    setCurrentUser(user);
 
     createUserDocRef(user);
 
