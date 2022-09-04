@@ -1,14 +1,10 @@
 //hooks
-import React, { useState, useContext } from 'react';
-
-//context
-import { UserContext } from '../../contexts/User.context';
+import React, { useState } from 'react';
 
 //firebase
 import {
   signInWithGooglePopup,
   signInAuthWithEmailAndPassword,
-  createUserDocRef,
 } from '../../utils/firebase/firebase';
 
 //components
@@ -26,8 +22,6 @@ const initFormVal = {
 };
 
 const Signin = () => {
-
-  const { setCurrentUser } = useContext(UserContext);
 
   const [formVal, setFormVal] = useState(initFormVal);
 
@@ -47,9 +41,9 @@ const Signin = () => {
 
     try {
 
-      const { user } = await signInAuthWithEmailAndPassword(email, password);
+      signInAuthWithEmailAndPassword(email, password);
 
-      setCurrentUser(user); //將user資料儲存在context內
+      //setCurrentUser與寫入db都由onAuthStateChangedListener統一執行
 
       //將input清空
       resetFormInput();
@@ -71,11 +65,9 @@ const Signin = () => {
   //與api, db互動的function都是async
   const handleGoogleSignin = async () => {
 
-    const { user } = await signInWithGooglePopup();
+    await signInWithGooglePopup();
 
-    setCurrentUser(user);
-
-    createUserDocRef(user);
+    //setCurrentUser與寫入db都由onAuthStateChangedListener統一執行
 
   };
 
