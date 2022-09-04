@@ -3,7 +3,9 @@ import { initializeApp } from "firebase/app";
 import { 
   getAuth, 
   GoogleAuthProvider, 
-  signInWithPopup 
+  signInWithPopup,
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
 } from "firebase/auth";
 import { 
   getFirestore, 
@@ -27,7 +29,7 @@ const firebaseBackendApp = initializeApp(firebaseConfig);
 
 const db = getFirestore(firebaseBackendApp); //collection -> document -> data
 
-export const auth = getAuth();
+export const auth = getAuth(firebaseBackendApp);
 
 export const googleProvider = new GoogleAuthProvider();
 
@@ -40,20 +42,24 @@ googleProvider.setCustomParameters({
 
 //google第三方登入
 export const signInWithGooglePopup = () => {
-  return signInWithPopup(auth, googleProvider); //this returns 'user'
+  return signInWithPopup(auth, googleProvider); 
+  //this returns 'user'
 };
 
-//每次signin, 都會抓取db內user的資料
-export const createUserDocRef = async (user) => {
+//每次signup或google signin, 都會檢查user是否需存進db
+export const createUserDocRef = async ( user, additionalInfo = {}) => {
+
+  //檢查user是否有被傳進來
+  if(!user) return;
 
   //抓取user的doc節點
   const userDocRef = doc(db, "users", user.uid);
 
   //透過getdoc.exist()來檢查user是否存在於db
-  const userSnapShot = await getDoc(userDocRef);
+  const userDocSnapShot = await getDoc(userDocRef);
 
   //若不存在, 則為新帳戶, 需透過setdoc來將user資料寫入db
-  if (!userSnapShot.exists()){
+  if (!userDocSnapShot.exists()){
 
     const { displayName, email } = user;
     const createdAt = new Date();
@@ -62,7 +68,8 @@ export const createUserDocRef = async (user) => {
       await setDoc(userDocRef, { 
         displayName, 
         email, 
-        createdAt 
+        createdAt,
+        ...additionalInfo //一般signup需要額外pass displayName進來
       });
 
     } catch(err) {
@@ -72,4 +79,20 @@ export const createUserDocRef = async (user) => {
 
   //若user已經存在, 則單純return user doc
   return userDocRef;
+};
+
+//signup - with email and password
+export const createAuthUserWithEmailAndPassword = async (email, password) => {
+
+  if(!email || !password) return;
+
+  return await createUserWithEmailAndPassword(auth, email, password);
+};
+
+//signin
+export const signInAuthWithEmailAndPassword = async (email, password) => {
+
+  if(!email || !password) return;
+
+  return await signInWithEmailAndPassword(auth, email, password);
 };
