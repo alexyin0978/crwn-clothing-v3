@@ -1,8 +1,5 @@
 //hooks
-import React, { useState, useContext } from 'react';
-
-//context
-import { UserContext } from '../../contexts/User.context';
+import React, { useState } from 'react';
 
 //firebase
 import {
@@ -27,8 +24,6 @@ const initFormVal = {
 };
 
 const Signup = () => {
-
-  const { setCurrentUser } = useContext(UserContext);
 
   const [formVal, setFormVal] = useState(initFormVal);
 
@@ -58,8 +53,9 @@ const Signup = () => {
       
       //非第三方登入(註冊)需要自己補上displayName
       await createUserDocRef(user, { displayName });
+      //在UserContext內與這裡都會同步執行createUserDocRef
 
-      setCurrentUser(user);
+      //setCurrentUser由onAuthStateChangedListener統一執行
 
       //將input清空
       resetFormInput();

@@ -6,7 +6,8 @@ import {
   signInWithPopup,
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
-  signOut
+  signOut,
+  onAuthStateChanged,
 } from "firebase/auth";
 import { 
   getFirestore, 
@@ -65,6 +66,8 @@ export const createUserDocRef = async ( user, additionalInfo = {}) => {
     const { displayName, email } = user;
     const createdAt = new Date();
 
+    console.log(additionalInfo)
+
     try {
       await setDoc(userDocRef, { 
         displayName, 
@@ -101,4 +104,23 @@ export const signInAuthWithEmailAndPassword = async (email, password) => {
 //signout
 export const signOutUser = async () => {
   return await signOut(auth);
+};
+
+//authListener
+export const onAuthStateChangedListener = (callback) => {
+  /*
+  onAuthStateChanged
+  執行: 在signin或signout時會被執行,
+  params: 需要傳入auth以及一個callback, callback會得到'user',
+  return: 會回傳一個unsubscribe function, 執行後可以停止listening,
+  */
+  return onAuthStateChanged(auth, callback);
+
+  /*備註：observer(listener) pattern
+  {
+    next: callback,(funciton triggered when state changed)
+    error: errorHandler,
+    complete: completedCallback, 
+  }
+  */
 };
