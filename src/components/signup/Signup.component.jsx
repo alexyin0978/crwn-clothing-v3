@@ -1,5 +1,8 @@
 //hooks
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
+
+//context
+import { UserContext } from '../../contexts/User.context';
 
 //firebase
 import {
@@ -24,6 +27,8 @@ const initFormVal = {
 };
 
 const Signup = () => {
+
+  const { setCurrentUser } = useContext(UserContext);
 
   const [formVal, setFormVal] = useState(initFormVal);
 
@@ -53,6 +58,8 @@ const Signup = () => {
       
       //非第三方登入(註冊)需要自己補上displayName
       await createUserDocRef(user, { displayName });
+
+      setCurrentUser(user);
 
       //將input清空
       resetFormInput();
