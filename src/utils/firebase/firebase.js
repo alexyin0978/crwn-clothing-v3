@@ -1,5 +1,6 @@
 // Import the functions you need from the SDKs you need
 import { initializeApp } from "firebase/app";
+
 import { 
   getAuth, 
   GoogleAuthProvider, 
@@ -9,11 +10,16 @@ import {
   signOut,
   onAuthStateChanged,
 } from "firebase/auth";
+
 import { 
   getFirestore, 
   doc, 
   getDoc, 
-  setDoc
+  setDoc,
+  getDocs,
+  collection,
+  deleteDoc,
+  updateDoc
 } from "firebase/firestore";
 
 
@@ -65,8 +71,6 @@ export const createUserDocRef = async ( user, additionalInfo = {}) => {
 
     const { displayName, email } = user;
     const createdAt = new Date();
-
-    console.log(additionalInfo)
 
     try {
       await setDoc(userDocRef, { 
@@ -123,4 +127,105 @@ export const onAuthStateChangedListener = (callback) => {
     complete: completedCallback, 
   }
   */
+};
+
+//後台管理 - POST - shop-item
+const SHOP_ITEMS_COLLECTION_NAME = 'shop-items';
+export const POSTShopItemDoc = async (formVal) => {
+
+  const { id, name, imageUrl, price } = formVal;
+
+  //抓取shopItem的doc節點
+  const shopItemDocRef = doc(db, SHOP_ITEMS_COLLECTION_NAME, id);
+
+  //GET - 透過getdoc.exist()來檢查shop-item是否存在於db
+  const shopItemDocSnapShot = await getDoc(shopItemDocRef);
+
+  //POST - 若不存在, 則為新帳戶, 需透過setdoc來將shop-item資料寫入db
+  if (!shopItemDocSnapShot.exists()){
+
+    try {
+      await setDoc(shopItemDocRef, { 
+        id,
+        name, 
+        imageUrl, 
+        price,
+      });
+
+    } catch(err) {
+      console.log('error uploading shop item data', err.message);
+    }
+  }
+
+  //若shopitem已經存在, 則單純return shop-item doc
+
+  console.log('Item already exists, please change the id.')
+
+  return shopItemDocRef;
+};
+
+//後台管理 - GET - shop-items-collection
+export const GETShopItemCollection = async () => {
+
+  //抓取shop-item的collection節點
+  const shopItemsCollectionRef = collection(db, SHOP_ITEMS_COLLECTION_NAME);
+
+  //透過getDocs直接抓到整個shop-item-collection, 會是一個array[]
+  const shopItemsCollectionSnapShot = await getDocs(shopItemsCollectionRef);
+  
+  const itemsArr = [];
+
+  shopItemsCollectionSnapShot.forEach(item => {
+    itemsArr.push(item.data());
+  });
+
+  return itemsArr;
+};
+
+//後台管理 - GET - shop-item-doc
+export const GETShopItemDoc = async (id) => {
+
+  const shopItemDocRef = doc(db, SHOP_ITEMS_COLLECTION_NAME, id);
+
+  const shopItemDocSnapShot = await getDoc(shopItemDocRef);
+
+  try {
+
+    if(shopItemDocSnapShot.exists()){
+
+      return shopItemDocSnapShot.data();
+
+    } else {
+
+      console.log("Data doesn't exist.");
+
+    }
+
+  } catch(err) {
+
+    console.log(err);
+
+  }
+
+};
+
+//後台管理 - PUT - shop-item-doc
+export const PUTShopItemDoc = async (formVal) => {
+
+  const { id } = formVal;
+
+  const shopItemDocRef = doc(db, SHOP_ITEMS_COLLECTION_NAME, id);
+
+  return await updateDoc(shopItemDocRef, {
+    ...formVal
+  });
+
+};
+
+//後台管理 - DELETE - shop-item-doc
+export const DELETEShopItemDoc = async (id) => {
+
+  const shopItemDocRef = doc(db, SHOP_ITEMS_COLLECTION_NAME, id);
+
+  return await deleteDoc(shopItemDocRef);
 };
