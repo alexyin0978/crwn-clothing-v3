@@ -5,6 +5,7 @@ import { BrowserRouter } from 'react-router-dom'
 
 //context
 import { UserContextProvider } from './contexts/User.context';
+import { ShopItemContextProvider } from './contexts/ShopItem.context';
 
 //style
 import './index.scss';
@@ -21,9 +22,11 @@ const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <React.StrictMode>
     <UserContextProvider>
-      <BrowserRouter>
-        <App />
-      </BrowserRouter>
+      <ShopItemContextProvider>
+        <BrowserRouter>
+          <App />
+        </BrowserRouter>
+      </ShopItemContextProvider>
     </UserContextProvider>
   </React.StrictMode>
 );
