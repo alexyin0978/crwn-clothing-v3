@@ -1,53 +1,58 @@
 //hooks
-import React, { useState, createContext } from 'react';
+import React, { createContext, useState } from 'react';
 
 //firebase
 import {
   GETShopItemCollection,
 } from '../utils/firebase/firebase';
 
-// This context is for back-stage use only
-
 //context
-export const ShopItemContext = createContext({
+export const ProductsContext = createContext({
 
   items: null,
   setItems: () => {},
+
+  loading: true,
+  setLoading: () => {},
 
   GETShopItems: () => {},
 
 });
 
 //provider
-export const ShopItemContextProvider = ({children}) => {
+export const ProductsContextProvider = ({children}) => {
 
   const [items, setItems] = useState([]);
 
-  const GETShopItems = async () => {
-    
+  const [loading, setLoading] = useState(true);
+
+  const GETShopItems = async() => {
+
     try{
 
       const res = await GETShopItemCollection();
 
       setItems(res);
 
+      setLoading(false);
+
     } catch(err){
 
       console.log(err);
 
     }
+  }
 
-  };
-  
   const value = {
     items,
     setItems,
-    GETShopItems
+    GETShopItems,
+    loading,
   };
 
   return (
-    <ShopItemContext.Provider value={value}>
+    <ProductsContext.Provider value={value}>
       {children}
-    </ShopItemContext.Provider>
+    </ProductsContext.Provider>
   );
 };

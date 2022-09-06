@@ -5,7 +5,8 @@ import { BrowserRouter } from 'react-router-dom'
 
 //context
 import { UserContextProvider } from './contexts/User.context';
-import { ShopItemContextProvider } from './contexts/ShopItem.context';
+import { ProductsContextProvider } from './contexts/Products.context';
+import { ShopItemContextProvider } from './contexts/ShopItem.context'; //back-stage
 
 //style
 import './index.scss';
@@ -22,11 +23,13 @@ const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <React.StrictMode>
     <UserContextProvider>
-      <ShopItemContextProvider>
-        <BrowserRouter>
-          <App />
-        </BrowserRouter>
-      </ShopItemContextProvider>
+      <ProductsContextProvider>
+        <ShopItemContextProvider>
+          <BrowserRouter>
+            <App />
+          </BrowserRouter>
+        </ShopItemContextProvider>
+      </ProductsContextProvider>
     </UserContextProvider>
   </React.StrictMode>
 );
