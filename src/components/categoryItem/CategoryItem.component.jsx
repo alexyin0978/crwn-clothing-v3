@@ -6,14 +6,14 @@ import './CategoryItem.style.scss';
 
 const CategoryItem = ({item}) => {
   
-  const { name, imageUrl } = item;
+  const { name, url } = item;
 
   return (
     <div className='category-container'>
       <div 
       className='background-image'
       style={{
-        backgroundImage: `url(${imageUrl})`,
+        backgroundImage: `url(${url})`,
       }}
       />
       <div className='body-container'>

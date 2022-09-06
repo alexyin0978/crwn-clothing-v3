@@ -43,6 +43,9 @@ const Navbar = () => {
           </div>
         </Link>
         <div className='nav-links-container'>
+          <Link className='nav-link' to='/shop'>
+            Shop
+          </Link>
           {
             currentUser &&
             currentUser !== null &&
