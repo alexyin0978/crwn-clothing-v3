@@ -1,5 +1,6 @@
 //hooks
 import React, { useContext } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 //component
 import Button from '../button/Button.component';
@@ -17,6 +18,12 @@ const CartDropdown = () => {
 
   const { cartItems } = useContext(CartContext);
 
+  const navigate = useNavigate();
+
+  const handleGoToCheckout = () => {
+    navigate('/checkout');
+  }
+
   return (
     <div className='cart-dropdown-container'>
       <div className='cart-items'>
@@ -27,10 +34,14 @@ const CartDropdown = () => {
             cartItems.map(item => (
               <CartItem key={item.id} item={item} />
             ))
-          ) : null
+          ) : <span className='empty-message'>Your cart is empty</span>
         }
       </div>
-      <Button>CHECKOUT</Button>
+      <div className='button'>
+        <Button onClick={handleGoToCheckout}>
+          CHECKOUT
+        </Button>
+      </div>
     </div>
   );
 };

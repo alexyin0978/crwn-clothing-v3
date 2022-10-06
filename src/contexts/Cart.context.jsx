@@ -33,6 +33,35 @@ const addCartItem = (cartItems, productToAdd) => {
   return [...cartItems, {...productToAdd, quantity: 1}];
 };
 
+//helper function - increaseCount
+const increaseCount = (cartItems, cartItemToIncrease) => {
+
+  return cartItems.map(cartItem => (
+    cartItem.id === cartItemToIncrease.id ? 
+    {...cartItem, quantity: ++cartItem.quantity} :
+    cartItem
+  ));
+};
+
+//helper function - decreaseCount
+const decreaseCount = (cartItems, cartItemToDecrease) => {
+
+  if(cartItemToDecrease.quantity === 1){
+    return cartItems.filter(cartItem => cartItem.id !== cartItemToDecrease.id);
+  }
+
+  return cartItems.map(cartItem => (
+    cartItem.id === cartItemToDecrease.id ?
+    {...cartItem, quantity: --cartItem.quantity} :
+    cartItem
+  ));
+};
+
+//helper function - removeItem
+const removeItem = (cartItems, cartItemToRemove) => {
+  return cartItems.filter(cartItem => cartItem.id !== cartItemToRemove.id);
+};
+
 //context
 export const CartContext = createContext({
 
@@ -41,8 +70,13 @@ export const CartContext = createContext({
 
   cartCount: 0,
 
+  cartPriceTotal: 0,
+
   cartItems: [],
   addItemToCart: () => {},
+  increaseCartItemCount: () => {},
+  decreaseCartItemCount: () => {},
+  removeItemFromCart: () => {},
 
 });
 
@@ -51,8 +85,10 @@ export const CartContextProvider = ({children}) => {
 
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [cartCount, setCartCount] = useState(0);
+  const [cartPriceTotal, setCartPriceTotal] = useState(0);
   const [cartItems, setCartItems] = useState([]);
 
+  //calculate cartCountTotal when cartItems change
   useEffect(() => {
 
     const newCartCount = cartItems.reduce((prevTotal, currentCartItem) => (
@@ -62,15 +98,41 @@ export const CartContextProvider = ({children}) => {
     setCartCount(newCartCount);
   }, [cartItems]);
 
+  //calculate cartPriceTotal when cartItems change
+  useEffect(() => {
+
+    const newCartPriceTotal = cartItems.reduce((prevTotal, currentCartItem) => (
+      prevTotal + Number(currentCartItem.price) * currentCartItem.quantity
+    ), 0);
+
+    setCartPriceTotal(newCartPriceTotal);
+  }, [cartItems]);
+
   const addItemToCart = (productToAdd) => {
     setCartItems(addCartItem(cartItems, productToAdd));
+  };
+
+  const increaseCartItemCount = (cartItemToIncrease) => {
+    setCartItems(increaseCount(cartItems, cartItemToIncrease));
+  };
+
+  const decreaseCartItemCount = (cartItemToDecrease) => {
+    setCartItems(decreaseCount(cartItems, cartItemToDecrease));
+  };
+
+  const removeItemFromCart = (cartItemToRemove) => {
+    setCartItems(removeItem(cartItems, cartItemToRemove));
   };
 
   const value = {
     isCartOpen,
     setIsCartOpen,
     cartCount,
+    cartPriceTotal,
     addItemToCart,
+    increaseCartItemCount,
+    decreaseCartItemCount,
+    removeItemFromCart,
     cartItems,
   };
 
