@@ -1,10 +1,16 @@
 //hooks
-import React, { createContext, useState } from 'react';
+import React, { createContext, useState, useEffect } from 'react';
 
 //firebase
 import {
   GETShopItemCollection,
+  addAllItemsUsingBatch,
 } from '../utils/firebase/firebase';
+
+//all shop-data
+import { SHOP_DATA } from '../data/shop-data';
+
+
 
 //context
 export const ProductsContext = createContext({
@@ -41,7 +47,22 @@ export const ProductsContextProvider = ({children}) => {
       console.log(err);
 
     }
-  }
+  };
+
+  //batch write all shop-items into db -> only need to fire once
+  /*
+  useEffect(() => {
+
+    try{
+
+      addAllItemsUsingBatch('categories', SHOP_DATA);
+
+    } catch (err) {
+      console.log(err);
+    }
+
+  }, []);
+  */
 
   const value = {
     items,

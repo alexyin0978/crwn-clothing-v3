@@ -19,7 +19,8 @@ import {
   getDocs,
   collection,
   deleteDoc,
-  updateDoc
+  updateDoc,
+  writeBatch
 } from "firebase/firestore";
 
 
@@ -228,4 +229,53 @@ export const DELETEShopItemDoc = async (id) => {
   const shopItemDocRef = doc(db, SHOP_ITEMS_COLLECTION_NAME, id);
 
   return await deleteDoc(shopItemDocRef);
+};
+
+//後台管櫟 - 用batch一次寫入所有商品資料 -> category -> items -> itemData
+/*
+batch用來一次寫入一大筆資料，
+但寫入時會確保每一筆資料都成功
+才會算commit成功
+只要有一筆失敗則全部重來
+*/
+/*
+資料形式：
+collection: categories
+documents: title (obj.title -> string of category's title)
+data: items (obj.items -> array of items)
+[
+  {
+    title: 'Hats',
+    items: [
+      {
+        id: 1,
+        name: 'Brown, Brim',
+        imageUrl: '...',
+        price: 25,
+      },
+      {
+        ...
+      },
+    ]
+  }, 
+  {
+    ...
+  },
+]
+*/
+export const addAllItemsUsingBatch = async (collectionKey, arrOfShopCategoriesAndData) => {
+
+  const batch = writeBatch(db);
+
+  arrOfShopCategoriesAndData.forEach(shopCategoryObj => {
+
+    const shopDocRef = doc(db, collectionKey, shopCategoryObj.title.toLowerCase());
+
+    batch.set(shopDocRef, shopCategoryObj);
+
+  });
+
+  await batch.commit();
+
+  console.log('done batching');
 };
