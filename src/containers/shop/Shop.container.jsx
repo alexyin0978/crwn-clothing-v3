@@ -1,11 +1,11 @@
 //hooks
 import React, { useContext, useEffect, Fragment } from 'react';
 
+//components
+import ProductsPreview from '../../components/productsPreview/ProductsPreview.component';
+
 //context
 import { ProductsContext } from '../../contexts/Products.context';
-
-//component
-import ProductCard from '../../components/productCard/ProductCard.component';
 
 //style
 import './Shop.styles.scss';
@@ -20,22 +20,17 @@ const Shop = () => {
     <>
       {
         !isLoading ? (
-          <>
+          <div className='shop-container'>
             {
-              Object.keys(categoriesMap).map(title => (
-                <Fragment key={title}>
-                  <h2>{title.toUpperCase()}</h2>
-                  <div className='products-container'>
-                    {
-                      categoriesMap[title].map(item => (
-                        <ProductCard key={item.id} item={item} />
-                      ))
-                    }
-                  </div>
-                </Fragment>
-              ))
+              Object.keys(categoriesMap).map(title => {
+                const categoryItemsArr = categoriesMap[title];
+                  return <ProductsPreview 
+                  key={title} 
+                  items={categoryItemsArr} 
+                  title={title} />    
+              })
             }
-          </>
+          </div>
         ) : 'loading'
       }
     </>
