@@ -3,53 +3,47 @@ import React, { createContext, useState, useEffect } from 'react';
 
 //firebase
 import {
-  GETShopItemCollection,
-  addAllItemsUsingBatch,
+  GETAllCategoriesMap,
+  // addAllItemsUsingBatch,
 } from '../utils/firebase/firebase';
 
 //all shop-data
-import { SHOP_DATA } from '../data/shop-data';
+// import { SHOP_DATA } from '../data/shop-data';
 
 
 
 //context
 export const ProductsContext = createContext({
 
-  items: null,
-  setItems: () => {},
-
-  loading: true,
-  setLoading: () => {},
-
-  GETShopItems: () => {},
+  isLoading: true,
+  categoriesMap: {},
 
 });
 
 //provider
 export const ProductsContextProvider = ({children}) => {
 
-  const [items, setItems] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [categoriesMap, setCategoriesMap] = useState({});
 
-  const [loading, setLoading] = useState(true);
+  //app mount時get categories資料
+  useEffect(() => {
 
-  const GETShopItems = async() => {
+    const getAllCategoriesMapCallback = async () => {
 
-    try{
+      const categoriesMap = await GETAllCategoriesMap();
 
-      const res = await GETShopItemCollection();
+      setCategoriesMap(categoriesMap);
+      setIsLoading(false);
+    }; 
 
-      setItems(res);
+    getAllCategoriesMapCallback();
 
-      setLoading(false);
+  }, []);
 
-    } catch(err){
-
-      console.log(err);
-
-    }
-  };
-
-  //batch write all shop-items into db -> only need to fire once
+  //batch write all shop-items into db
+  //會一直監聽SHOP_DATA的變動
+  //這裡第一次寫入後先可以關掉，畢竟SHOP_DATA也不會一直改動
   /*
   useEffect(() => {
 
@@ -65,10 +59,8 @@ export const ProductsContextProvider = ({children}) => {
   */
 
   const value = {
-    items,
-    setItems,
-    GETShopItems,
-    loading,
+    isLoading,
+    categoriesMap,
   };
 
   return (

@@ -1,5 +1,5 @@
 //hooks
-import React, { useContext, useEffect } from 'react';
+import React, { useContext, useEffect, Fragment } from 'react';
 
 //context
 import { ProductsContext } from '../../contexts/Products.context';
@@ -14,24 +14,31 @@ import './Shop.styles.scss';
 
 const Shop = () => {
 
-  const { loading, items, GETShopItems } = useContext(ProductsContext);
-
-  useEffect(() => {
-    GETShopItems();
-  }, []);
+  const { categoriesMap, isLoading } = useContext(ProductsContext);
 
   return (
-    <div className='products-container'>
+    <>
       {
-        !loading ? (
-          items &&
-          items.length !== 0 &&
-          items.map(item => (
-            <ProductCard key={item.id} item={item} />
-          ))
-        ) : 'loading items'
+        !isLoading ? (
+          <>
+            {
+              Object.keys(categoriesMap).map(title => (
+                <Fragment key={title}>
+                  <h2>{title.toUpperCase()}</h2>
+                  <div className='products-container'>
+                    {
+                      categoriesMap[title].map(item => (
+                        <ProductCard key={item.id} item={item} />
+                      ))
+                    }
+                  </div>
+                </Fragment>
+              ))
+            }
+          </>
+        ) : 'loading'
       }
-    </div>
+    </>
   );
 };
 

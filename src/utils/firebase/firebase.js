@@ -130,6 +130,8 @@ export const onAuthStateChangedListener = (callback) => {
   */
 };
 
+
+
 //後台管理 - POST - shop-item
 const SHOP_ITEMS_COLLECTION_NAME = 'shop-items';
 export const POSTShopItemDoc = async (formVal) => {
@@ -231,7 +233,9 @@ export const DELETEShopItemDoc = async (id) => {
   return await deleteDoc(shopItemDocRef);
 };
 
-//後台管櫟 - 用batch一次寫入所有商品資料 -> category -> items -> itemData
+
+
+//後台管理v2 - 用batch一次寫入所有商品資料 -> category -> items -> itemData
 /*
 batch用來一次寫入一大筆資料，
 但寫入時會確保每一筆資料都成功
@@ -278,4 +282,34 @@ export const addAllItemsUsingBatch = async (collectionKey, arrOfShopCategoriesAn
   await batch.commit();
 
   console.log('done batching');
+};
+
+//後台管理v2 - GET-all-categories
+export const GETAllCategoriesMap = async () => {
+
+  const categoriesCollectionRef = collection(db, 'categories');
+
+  const categoriesCollectionSnapShot = await getDocs(categoriesCollectionRef);
+
+  const categoriesMap = await categoriesCollectionSnapShot.docs.reduce((acc, categoryDocSnapShot) => {
+
+    const { title, items } = categoryDocSnapShot.data();
+
+    acc[title.toLowerCase()] = items;
+
+    return acc;
+    
+    /*
+    將每個category obj全裝進一個obj內, 長這樣：
+    {
+      hats: [...],
+      jackets: [...],
+      ...
+    }
+    */
+
+  }, {});
+
+  return categoriesMap;
+
 };
