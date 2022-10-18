@@ -1,5 +1,5 @@
 //hooks
-import { useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 
 //component
 import ProductCard from '../../components/productCard/ProductCard.component';
@@ -11,18 +11,12 @@ import './ProductsPreview.styles.scss';
 
 const ProductsPreview = ({items, title}) => {
 
-  const navigate = useNavigate();
-
-  const handleNavigateToProductPage = (title) => {
-    navigate(`${title}`, {state: {productName: title}});
-  };
-
   return (
     <div className='category-preview-container'>
       <h2>
-        <span className='title' onClick={() => handleNavigateToProductPage(title.toLowerCase())}>
+        <Link className='title' to={`${title}`}>
           {title.toUpperCase()}
-        </span>
+        </Link>
       </h2>
       <div className='preview'>
         {
@@ -35,6 +29,6 @@ const ProductsPreview = ({items, title}) => {
       </div>
     </div>
   );
-};
+}; 
  
 export default ProductsPreview;

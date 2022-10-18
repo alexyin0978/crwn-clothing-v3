@@ -34,17 +34,22 @@ const ProductPage = () => {
   }
 
   return (
-    <div className="product-page-container">
-      {
-        productArr &&
-        productArr !== null &&
-        productArr !== undefined &&
-        productArr.length !== 0 && 
-        productArr.map(product => (
-          <ProductCard key={product.id} item={product} />
-        ))
-      }
-    </div>
+    <>
+      <h2 className="product-title">
+        {productName.toUpperCase()}
+      </h2>
+      <div className="product-page-container">
+        {
+          productArr &&
+          productArr !== null &&
+          productArr !== undefined &&
+          productArr.length !== 0 && 
+          productArr.map(product => (
+            <ProductCard key={product.id} item={product} />
+          ))
+        }
+      </div>
+    </>
   );
 };
  
