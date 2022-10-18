@@ -1,15 +1,22 @@
-//dep
+//hook
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 
 //style
 import './CategoryItem.style.scss';
 
 const CategoryItem = ({item}) => {
   
-  const { name, url } = item;
+  const { name, url, route } = item;
+
+  const navigate = useNavigate();
+
+  const handleNavigateToProductPage = () => {
+    navigate(route);
+  };
 
   return (
-    <div className='category-container'>
+    <div className='category-container' onClick={handleNavigateToProductPage}>
       <div 
       className='background-image'
       style={{
